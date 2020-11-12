@@ -1,7 +1,7 @@
 ﻿// Purpose: Provide a JSON Array class
 // Author : Scott Bakker
 // Created: 09/13/2019
-// LastMod: 10/23/2020
+// LastMod: 11/12/2020
 
 // Notes  : The values in the list ARE ordered based on when they are added.
 //          The values are NOT sorted, and there can be duplicates.

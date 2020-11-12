@@ -1,6 +1,7 @@
 ﻿// Purpose: Implement a simple TextReader which can peek one character ahead
 // Author : Scott Bakker
 // Created: 04/17/2020
+// LastMod: 11/12/2020
 
 using System;
 using System.IO;

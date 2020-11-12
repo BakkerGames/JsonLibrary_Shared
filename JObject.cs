@@ -1,7 +1,7 @@
 ﻿// Purpose: Provide a JSON Object class
 // Author : Scott Bakker
 // Created: 09/13/2019
-// LastMod: 10/30/2020
+// LastMod: 11/12/2020
 
 // Notes  : The keys in this JObject implementation are case sensitive, so "abc" <> "ABC".
 //        : Keys cannot be blank: null, empty, or contain only whitespace.
@@ -18,9 +18,14 @@
 //        : A path to a specific value can be accessed using multiple key strings, as in
 //              jo["key1", "key2", "key3"] = 123
 //              value = jo["key1", "key2", "key3"]
-//          All sub-objects must be JObjects. At the first non-JObject, this path syntax
-//          cannot be used further. This is similar to "key1.key2.key3" used by some
-//          JSON implementations, but that limits key characters so isn't used here.
+//          All sub-objects must be JObjects. At the first non-JObject, an error will be
+//          thrown. The result is an untyped Object and must be cast.
+//        : This is similar to "$.key1.key2.key3" used by some JSON implementations
+//          except it doesn't limit the key characters or force quoting. Path splitting
+//          can always be implemented in the calling application with the desired syntax.
+//        : GetArray("key1", "key2", "key3") can be used to get a JArray at a specific
+//          path within a JObject. An error is thrown if the position doesn't contain
+//          a JArray, or Nothing will be returned if the value doesn't exist.
 //        : Literal strings in C# collapse, so "a\\b" and "a\u005Cb" are equal. If used
 //          for keys, they will create one entry. In VB.NET, they would not collapse and
 //          would not be equal, and thus would create two entries.
@@ -316,12 +321,12 @@ namespace JsonLibrary
             // Purpose: Sort the keys before returning as a string
             // Author : Scott Bakker
             // Created: 10/17/2019
-            // LastMod: 08/11/2020
+            // LastMod: 11/12/2020
             StringBuilder result = new StringBuilder();
             result.Append('{');
             bool addComma = false;
-            SortedList sorted = new SortedList(_data);
-            for (int i = 0; i < sorted.Count; i++)
+            SortedList<string, object> sorted = new SortedList<string, object>(_data);
+            foreach (KeyValuePair<string, object> kv in sorted)
             {
                 if (addComma)
                 {
@@ -331,9 +336,9 @@ namespace JsonLibrary
                 {
                     addComma = true;
                 }
-                result.Append(JsonRoutines.ValueToString(sorted.GetKey(i)));
+                result.Append(JsonRoutines.ValueToString(kv.Key));
                 result.Append(':');
-                result.Append(JsonRoutines.ValueToString(sorted.GetByIndex(i)));
+                result.Append(JsonRoutines.ValueToString(kv.Value));
             }
             result.Append('}');
             return result.ToString();
